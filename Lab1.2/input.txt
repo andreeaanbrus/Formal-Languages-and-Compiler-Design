@@ -1,0 +1,11 @@
+int_main() {
+    int a = +5;
+    int b = 1 + a;
+    print ( a + b );
+    if ( a + b == '1') {
+        print (a * b);
+    }
+    list l = ['a', 2, 30];
+    read (a);
+    print (a / b);
+}
