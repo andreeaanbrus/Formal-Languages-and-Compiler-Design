@@ -27,11 +27,11 @@ def isReserved(word):
 
 
 def isIdentifier(word):
-    return re.match(r'^[a-zA-Z]([a-zA-Z]|[0-9]){0,255}$', word) is not None
+    return re.match(r'^[a-zA-Z]([a-zA-Z]|[0-9]){0,8}$', word) is not None
 
 
 def isConstant(token):
-    return re.match(r'((\'[a-z]\'|\'[0-9]\')|(\+|-){0,1}[0-9]+)', token) is not None
+    return re.match(r'((\'[a-z]\'|\'[0-9]\')|(\+|-){0,1}[0-9]*\d$)', token) is not None
 
 
 def getCodeOfToken(token):
@@ -62,26 +62,21 @@ def algo():
         for token in line:
             if token is not '':
                 print(token)
-                if isReserved(token) or isOperator(token) or isSeparator(token):
+                if token is ' ':
+                    pass
+                elif isReserved(token) or isOperator(token) or isSeparator(token):
                     print("operator or separator or reserved")
                     pif.add(getCodeOfToken(token), -1)
                 elif isIdentifier(token):
-                    pos = st.getPositionIdentifier(token)
-                    print("identifier", pos)
-                    if pos is None:
-                        pos = st.addIdentifier(token)
+                    print("identifier")
+                    pos = st.addIdentifier(token)
                     pif.add(getCodeOfToken('identifier'), pos)
                 elif isConstant(token):
                     print("constant")
-                    pos = st.getPositionConstant(token)
-                    print("consntant", pos)
-                    if pos is None:
-                        pos = st.addConstant(token)
+                    pos = st.addConstant(token)
                     pif.add(getCodeOfToken('constant'), pos)
                 else:
                     raise Exception("Lexical error at line", ''.join(line))
-
-
 algo()
 print(myLanguageSpecs.codification)
 print("Pif", pif)

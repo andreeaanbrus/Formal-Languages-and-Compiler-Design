@@ -3,10 +3,8 @@ from hashTable import HashTable
 
 class SymbolTable:
     def __init__(self):
-        self.symTableIdentifiers = HashTable()
-        self.symTableConstants = HashTable()
-        self.lastIdIdentifiers = 0
-        self.lastIdConstants = 0
+        self.symTableIdentifiers = HashTable(17)
+        self.symTableConstants = HashTable(17)
 
     def getIdentifiers(self):
         return self.symTableIdentifiers
@@ -15,19 +13,17 @@ class SymbolTable:
         return self.symTableConstants
 
     def addIdentifier(self, key):
-        self.lastIdIdentifiers += 1
-        self.symTableIdentifiers.add(key, self.lastIdIdentifiers)
-        return self.lastIdIdentifiers
+        position = self.symTableIdentifiers.add(key)
+        return position
 
     def addConstant(self, key):
-        self.lastIdConstants += 1
-        self.symTableConstants.add(key, self.lastIdConstants)
-        return self.lastIdConstants
+        position = self.symTableConstants.add(key)
+        return position
 
     def getPositionIdentifier(self, token):
-        return self.symTableIdentifiers.get(token)
+        return self.symTableIdentifiers.getPosition(token)
 
     def getPositionConstant(self, token):
-        return self.symTableConstants.get(token)
+        return self.symTableConstants.getPosition(token)
 
 
