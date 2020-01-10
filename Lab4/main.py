@@ -7,9 +7,7 @@ import re
 
 
 def main():
-    # print(parser.parse('int a = 5;'))
     # g = Grammar.readFromFile('grammar.txt')
-    # g = Grammar.readFromFile('myGrammar.txt')
     g = Grammar.readFromFile('my_mini_grammar.txt')
     parser = Parser(g)
     st = SymbolTable()
@@ -74,19 +72,19 @@ def main():
                         raise Exception("Lexical error at line", ''.join(line))
 
     algo()
-    # print("Pif", pif)
-    # print("Symbol Table Constants: ", st.symTableConstants)
-    # print("Symbol Table Identifiers: ", st.symTableIdentifiers)
-    # print(g.P)
     revereCodification = {}
     for key in myLanguageSpecs.codification:
         revereCodification[myLanguageSpecs.codification[key]] = key
-    inputStack = ''
+    inputStack = []
     for (code, id) in pif.pif:
-        inputStack += str(code) + ' '
+        inputStack += [str(code)]
     print("Productions: ", g.P)
-    print(parser.closure([('S1', '.' + g.S[0])]))
-    print(parser.parse(inputStack))
+    print(pif)
+
+    # print(parser.parse(inputStack))
     # print(parser.parse('abbc'))
-    # print(parser.getCannonicalCollection())
+    # print(parser.derivationStrings('abbc'))
+    print(parser.derivationStrings(inputStack))
+
+
 main()

@@ -24,9 +24,9 @@ class Parser:
                 if B in self.grammar.E:
                     continue
                 for prod in self.grammar.getProductions(B):
-                    dottedProd = (B, '.' + prod)
+                    dottedProd = (B, ['.'] + prod)
                     if dottedProd not in closure:
-                        closure.append(dottedProd)
+                        closure += [dottedProd]
                         done = False
         return closure
 
@@ -40,13 +40,13 @@ class Parser:
                 continue
             X, beta = Xbeta[0], Xbeta[1:]
             if X == symbol:
-                res = str(alpha) + X + '.' + str(beta)
+                res = alpha + [X] + ['.'] + beta
                 resultProd = (production[0], res)
-                C.append(resultProd)
+                C += [resultProd]
         return self.closure(C)
 
     def getCannonicalCollection(self):
-        C = [self.closure([('S1', '.' + self.grammar.S[0])])]
+        C = [self.closure([('S1', ['.', self.grammar.S[0]])])]
         finished = False
         while not finished:
             finished = True
@@ -54,13 +54,13 @@ class Parser:
                 for symbol in self.grammar.N + self.grammar.E:
                     nextState = self.goTo(state, symbol)
                     if nextState is not None and nextState not in C:
-                        C.append(nextState)
+                        C += [nextState]
                         finished = False
+        print(C)
         return C
 
     def generateTable(self):
         states = self.getCannonicalCollection()
-        print("states", states)
         # a line for each state si
         # dictionary having keys 'action' and x form N + E for goto(si, x)
         table = [{} for _ in range(len(states))]
@@ -82,13 +82,11 @@ class Parser:
                 if len(beta) != 0:
                     firstRuleCNT += 1
                 else:
-                    print(prod)
                     if prod[0] != 'S1':
                         secondRuleCNT += 1
                         productionIndex = self.grammar.P.index((prod[0], alpha))
-                    elif alpha == self.grammar.S[0]:
+                    elif alpha == [self.grammar.S[0]]:
                         thirdRuleCNT += 1
-
             if firstRuleCNT == len(state):
                 table[index]['action'] = 'shift'
 
@@ -98,20 +96,19 @@ class Parser:
             elif thirdRuleCNT == len(state):
                 table[index]['action'] = 'acc'
             else:
-                raise (Exception('Error'))
-            for symbol in self.grammar.N + self.grammar.E: #the goto part of the table
+                raise (Exception('Error', state))
+            for symbol in self.grammar.N + self.grammar.E:  # the goto part of the table
                 nextState = self.goTo(state, symbol)
                 if nextState in states:
                     table[index][symbol] = states.index(nextState)
+        print(table)
         return table
 
     def parse(self, input):
-        print(input)
         table = self.generateTable()
         self.workingStack = ['0']
         self.inputStack = [char for char in input]
         self.output = []
-        print(table)
         while len(self.workingStack) != 0:
             state = int(self.workingStack[-1])  # take the state number from working stack
             if len(self.inputStack) > 0:
@@ -138,6 +135,14 @@ class Parser:
                 if len(toRemoveFromWorkingStack) != 0:
                     raise (Exception('Cannot Parse reduce'))
                 self.inputStack.insert(0, reduceProduction[0])
-                self.output.insert(0, str(reduceState))
+                self.output.insert(0, reduceState)
 
         return self.output
+
+    def derivationStrings(self, input):
+        result = []
+        output = self.parse(input)
+        for el in output:
+            production = self.grammar.P[el]
+            result.append(production)
+        return result

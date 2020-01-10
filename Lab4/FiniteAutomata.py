@@ -51,7 +51,6 @@ class FiniteAutomata:
         F = ['K']
         for rule in RG.P:
             lhs, rhs = rule
-            print(lhs, rhs)
             if lhs == q0[0] and rhs == 'e':
                 F.append(lhs)
                 continue

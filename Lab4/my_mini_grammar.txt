@@ -1,8 +1,11 @@
-N = { p, s, c}
-E = { 25, 6, 0, 1}
-S = {p, }
+N = { program, stm, const, simpleAssignmentStatement, statementList, ioStatement}
+E = { 25, 6, 0, 1, 31, 18, 19, 15, 32}
+S = {program, }
 P = {
-	p -> s,
-    s -> 25 0 6 1,
-    c -> 0
+	program -> statementList,
+	statementList -> stm,
+	stm -> simpleAssignmentStatement | ioStatement,
+    simpleAssignmentStatement -> 25 0 6 const,
+    ioStatement -> 31 18  0 19 | 32 18 0 19,
+    const -> 1
 }
